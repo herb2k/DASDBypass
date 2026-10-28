@@ -1,4 +1,4 @@
-##Temporary workaround T1 OCLP 3.0.0 RC3/RC4 patched Macs running macOS Tahoe (26.7.1 or 26.7.2)
+## Temporary workaround T1 OCLP 3.0.0 RC3/RC4 patched Macs running macOS Tahoe (26.7.1 or 26.7.2)
 
 1. Compile the .dylib
 
