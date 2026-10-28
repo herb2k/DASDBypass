@@ -16,14 +16,18 @@ Modify SIP to Allow Debugging (Reboot into Recovery Terminal)
 
 1. Compile the .dylib
 
-       clang -dynamiclib -framework Foundation das_bypass.m -o /tmp/das_bypass.dylib
+              sudo mkdir -p /usr/local/lib
 
-2. Sign the .dylib
+              clang -dynamiclib -framework Foundation das_bypass.m -o /usr/local/lib/das_bypass.dylib
 
-       codesign -s - --force /tmp/das_bypass.dylib
-3. Install the .dylib
+3. Sign the .dylib
 
-       sudo launchctl setenv DYLD_INSERT_LIBRARIES /tmp/das_bypass.dylib
-4. Restart dasd
+       codesign -s - --force /usr/local/lib/das_bypass.dylib
+4. Install the .dylib
+
+       sudo launchctl setenv DYLD_INSERT_LIBRARIES /usr/local/lib/das_bypass.dylib
+
+5. Restart dasd
 
        sudo launchctl kickstart -k system/com.apple.dasd
+
