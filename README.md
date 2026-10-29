@@ -20,14 +20,21 @@ Modify SIP to Allow Debugging (Reboot into Recovery Terminal)
 
               clang -dynamiclib -framework Foundation das_bypass.m -o /usr/local/lib/das_bypass.dylib
 
-3. Sign the .dylib
+2. Sign the .dylib
 
        codesign -s - --force /usr/local/lib/das_bypass.dylib
-4. Install the .dylib
+3. Install the .dylib
 
        sudo launchctl setenv DYLD_INSERT_LIBRARIES /usr/local/lib/das_bypass.dylib
 
-5. Restart dasd
+4. Restart dasd
 
        sudo launchctl kickstart -k system/com.apple.dasd
 
+
+### Behaviour on Reboot
+This will still need to be re-applied after rebooting. (Step 3 and 4).
+
+A shortcut added to Login Items would make this work automatically. 
+
+the sudoers file can be updated to bypass the password entry.
