@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>local.dasdbypass</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/sh</string>
+        <string>-c</string>
+        <string>/bin/sleep 45; /bin/launchctl setenv DYLD_INSERT_LIBRARIES /usr/local/lib/das_bypass.dylib &amp;&amp; /bin/launchctl kickstart -k system/com.apple.dasd</string>
+    </array>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>StandardErrorPath</key>
+    <string>/var/log/dasdbypass-error.log</string>
+</dict>
+</plist>
