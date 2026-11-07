@@ -1,6 +1,8 @@
 #import <Foundation/Foundation.h>
 #import <objc/runtime.h>
 #import <dlfcn.h>
+#include <libgen.h>
+#include <mach-o/dyld.h>
 
 static id Swizzled_PolicyResponse(id self, SEL _cmd, id activities, id state) {
     return nil; // Satisfies the unrestricted policy pointer requirement
@@ -9,10 +11,25 @@ static id Swizzled_PolicyResponse(id self, SEL _cmd, id activities, id state) {
 __attribute__((constructor))
 static void init_bypass(void) {
     @autoreleasepool {
+		// --- STRICT EXCLUSIVE PROCESS TARGET FILTER ---
+        char path[PATH_MAX];
+        uint32_t size = sizeof(path);
+        if (_NSGetExecutablePath(path, &size) == 0) {
+            char *base = basename(path);
+            
+            // If the current process is NOT dasd, exit immediately.
+            // This completely isolates the dylib from all other system apps.
+            if (strcmp(base, "dasd") != 0) {
+                return; 
+            }
+        } else {
+            return; // Fail-safe: exit if path cannot be read
+        }
+        // ----------------------------------------------
+
         NSLog(@"[+] DAS Bypass Dylib Loaded into process %d", getpid());
         
         // Force-load the private DuetActivityScheduler library where the policy classes live
-        // This ensures the ObjC runtime registers the classes before we search for them
         void *duetHandle = dlopen("/System/Library/PrivateFrameworks/DuetActivityScheduler.framework/DuetActivityScheduler", RTLD_NOW);
         if (!duetHandle) {
             NSLog(@"[-] DAS Bypass: Failed to dlopen DuetActivityScheduler framework: %s", dlerror());
@@ -20,7 +37,6 @@ static void init_bypass(void) {
 
         Class fpPolicy = objc_getClass("_DASFileProtectionPolicy");
         
-        // Fallback: If it's still missing, try a broad loop lookup across all loaded classes
         if (!fpPolicy) {
             int numClasses = objc_getClassList(NULL, 0);
             if (numClasses > 0) {
