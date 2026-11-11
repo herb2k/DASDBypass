@@ -9,7 +9,7 @@
     <array>
         <string>/bin/sh</string>
         <string>-c</string>
-        <string>/bin/sleep 45; /bin/launchctl setenv DYLD_INSERT_LIBRARIES /usr/local/lib/das_bypass.dylib &amp;&amp; /bin/launchctl kickstart -k system/com.apple.dasd</string>
+        <string>/bin/sleep 45; /bin/launchctl setenv DYLD_INSERT_LIBRARIES /usr/local/lib/das_bypass.dylib && /bin/launchctl kickstart -k system/com.apple.dasd && /bin/sleep 2 && /bin/launchctl unsetenv DYLD_INSERT_LIBRARIES</string>
     </array>
 
     <key>RunAtLoad</key>
