@@ -26,7 +26,7 @@ Update: This may not be required after further testing.
 
        codesign -s - --force /usr/local/lib/das_bypass.dylib
    
-4. Install the .dylib
+4. Install/Test the .dylib
 
        sudo launchctl setenv DYLD_INSERT_LIBRARIES /usr/local/lib/das_bypass.dylib
 
@@ -43,3 +43,5 @@ A shortcut added to Login Items would make this work automatically.
 the sudoers file can be updated to bypass the password entry.
 
 Update: @MW on the Discord created a LaunchDaemon .plist that re-applies the patch after a short delay on reboots.
+
+Place local.dasdbypass.plist in the /Library/LaunchDaemons folder.
