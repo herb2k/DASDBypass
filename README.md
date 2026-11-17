@@ -6,6 +6,10 @@ This .dylib bypasses the "classCLocked" File Protection Mechanism which prevents
 
 I am not sure what other protections are reduced by applying this patch, however, from my research - the "classCLocked" data would be normally unlocked while logged into macOS and/or anytime FileVault is open (see *NSFileProtectionCompleteUntilFirstUserAuthentication*: https://support.apple.com/en-ca/guide/security/secb010e978a/web)
 
+Symptom: dasd logs {name: File Protection Policy, ..., Decision: AMNP} with classCLocked == 1 permanently, blocking cloudphotod/photoanalysisd maintenance activities — iCloud Photos, Messages, and Maps never sync.
+
+[Further Explanation of why this bypass is needed](https://github.com/herb2k/DASDBypass/blob/main/CLASSC_FINDINGS.md)
+
 ### Pre-requisites
 
 Modify SIP to Allow Debugging (Reboot into Recovery Terminal)
