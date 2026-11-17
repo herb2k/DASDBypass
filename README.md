@@ -45,3 +45,21 @@ the sudoers file can be updated to bypass the password entry.
 Update: @MW on the Discord created a LaunchDaemon .plist that re-applies the patch after a short delay on reboots.
 
 Place local.dasdbypass.plist in the /Library/LaunchDaemons folder.
+
+
+### V4 Build (Generated)
+
+Further analysis has shown that the Root cause of classCLocked (Class C / NSFileProtectionCompleteUntilFirstUserAuthentication) structurally does not appear to be able to be resolved on this T1-only hardware (no SEP) (that is, without fully disabling the T1 patches), so Apple’s real check always reports “locked” — not an OCLP bug, confirmed via Apple’s own documentation and extensive live tracing.
+
+V4 (final): patches only the one selector that’s real (responseForActivity:withState:), and only bypasses once SCDynamicStoreCopyConsoleUser() confirms a real console login has occurred since boot — latching permanently from that point, exactly mirroring genuine Class C semantics (unlocks at first auth, stays unlocked regardless of later screen locks, resets only on reboot).
+
+V4 installs the same way as the original. 
+
+If using the original, just build and re-sign this one, it should install to the same directory as the original.
+
+
+#### V4 Build and Install Instructions
+(Different Framework Target - SystemConfiguration)
+
+       sudo clang -dynamiclib -framework Foundation -framework SystemConfiguration das_bypass_v4.m -o /usr/local/lib/das_bypass.dylib
+       sudo codesign -s - --force /usr/local/lib/das_bypass.dylib
