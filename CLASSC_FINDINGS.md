@@ -52,3 +52,10 @@ A drop-in replacement for the original `das_bypass.m`, installed the same way (s
 ### Bottom line
 
 Given the depth of the underlying kernel/kext version mismatch (bridging two generations of Apple's SEP key-wrapping protocol with no source access isn't a reasonable binary-patching target), the userspace fix in `das_bypass_v4.m` is the correct and sufficient solution — it reproduces the intended observable behavior without requiring the underlying kernel subsystem to actually work.
+
+### Further Analysis of the MobileKeyBag:
+
+`MKBDeviceUnlockedSinceBoot()` → 1 — the device has been authenticated at least once this boot (true, correctly).
+`MKBUserUnlockedSinceBoot(uid=501)` → 0 — your user’s class-key unlock state is still false, even though you’re logged in and have unlocked the screen multiple times.
+
+That split is exactly the fault line. The device-level flag is presumably set early/cheaply (just “someone passed the login screen”), but the per-user flag is almost certainly what actually gates Class C (classCLocked) — and setting it to true requires committing the user’s class keys as unlocked, which means re-wrapping them through the SEP. That’s the step that structurally doesn’t exist in a working form on T1-only hardware (consistent with everything the kext disassembly showed: no software fallback for the no-SEP case). So MKB correctly knows the device unlocked, but can never correctly mark your Class C keys as unlocked, because that specific operation has nowhere to go.
