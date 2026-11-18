@@ -67,3 +67,30 @@ If using the original, just build and re-sign this one, it should install to the
 
        sudo clang -dynamiclib -framework Foundation -framework SystemConfiguration das_bypass_v4.m -o /usr/local/lib/das_bypass.dylib
        sudo codesign -s - --force /usr/local/lib/das_bypass.dylib
+
+
+
+# Patched AppleKeyStore-Tahoe.kext
+
+This patch resolves the issue without the need for the dylib or launchdaemon.
+
+### Installation
+
+1. Mount the EFI Volume
+
+   `sudo diskutil mount disk0s1`
+
+2. Back up existing kext at /EFI/OC/Kexts/AppleKeyStore-Tahoe.kext
+
+   example: `mv AppleKeyStore-Tahoe.kext /Volumes/EFI/`
+
+4. Copy the downloaded AppleKeyStore-Tahoe.kext
+
+   example: `cp -r ~/Downloads/AppleKeyStore-Tahoe.kext /Volumes/EFI/EFI/OC/Kexts/`
+
+5. Codesign the kext
+
+   `codesign -f -s - /Volumes/EFI/EFI/OC/Kexts/AppleKeyStore-Tahoe.kext`
+
+
+6. Reboot
